@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
 
- class Person {
+class Person {
     String fullName;
     String phoneNumber;
     int personAge;
@@ -69,6 +69,7 @@ class Doctor extends Person {
         try (PrintWriter writer = new PrintWriter(new FileWriter(filePath, true))) {
             writer.println(patientFullName + "," + medicalCondition + "," + medicalTreatment);
         } catch (IOException e) {
+            System.err.println("Error saving medical information to file: " + filePath);
             e.printStackTrace();
         }
     }
@@ -103,22 +104,28 @@ class Patient extends Person {
         loadAndDisplayMedicalInformation(fullName);
     }
 
-     void loadAndDisplayMedicalInformation(String patientFullName) {
+    void loadAndDisplayMedicalInformation(String patientFullName) {
         String filePath = "C:\\Users\\moaed\\eclipse-workspace\\secure code\\src\\fainal1\\medical_information.txt";
         try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
             String line;
             while ((line = reader.readLine()) != null) {
                 String[] parts = line.split(",");
-                String storedPatientFullName = parts[0];
-                String medicalCondition = parts[1];
-                String medicalTreatment = parts[2];
+                if (parts.length >= 3) {
+                    String storedPatientFullName = parts[0];
+                    String medicalCondition = parts[1];
+                    String medicalTreatment = parts[2];
 
-                if (storedPatientFullName.equals(patientFullName)) {
-                    System.out.println("Medical Condition: " + medicalCondition);
-                    System.out.println("Medical Treatment: " + medicalTreatment);
+                    if (storedPatientFullName.equals(patientFullName)) {
+                        System.out.println("Medical Condition: " + medicalCondition);
+                        System.out.println("Medical Treatment: " + medicalTreatment);
+                    }
+                } else {
+                    System.out.println("Invalid data format in the file: " + filePath);
+                    // You can choose to log this information or take appropriate action.
                 }
             }
         } catch (IOException e) {
+            System.err.println("Error reading the file: " + filePath);
             e.printStackTrace();
         }
     }
@@ -144,19 +151,32 @@ class HealthSystem {
         try {
             File doctorsFile = new File(DOCTORS_FILE);
             if (!doctorsFile.exists()) {
-                doctorsFile.createNewFile();
+                if (doctorsFile.createNewFile()) {
+                    System.out.println("Doctors file created: " + DOCTORS_FILE);
+                } else {
+                    System.out.println("Error creating doctors file: " + DOCTORS_FILE);
+                }
             }
 
             File patientsFile = new File(PATIENTS_FILE);
             if (!patientsFile.exists()) {
-                patientsFile.createNewFile();
+                if (patientsFile.createNewFile()) {
+                    System.out.println("Patients file created: " + PATIENTS_FILE);
+                } else {
+                    System.out.println("Error creating patients file: " + PATIENTS_FILE);
+                }
             }
 
             File medicalInfoFile = new File(MEDICAL_INFO_FILE);
             if (!medicalInfoFile.exists()) {
-                medicalInfoFile.createNewFile();
+                if (medicalInfoFile.createNewFile()) {
+                    System.out.println("Medical info file created: " + MEDICAL_INFO_FILE);
+                } else {
+                    System.out.println("Error creating medical info file: " + MEDICAL_INFO_FILE);
+                }
             }
         } catch (IOException e) {
+            System.err.println("Error initializing files.");
             e.printStackTrace();
         }
     }
@@ -174,6 +194,7 @@ class HealthSystem {
                 doctors.put(fullName, new Doctor(fullName, phoneNumber, personAge, personGender, passwordHash));
             }
         } catch (IOException e) {
+            System.err.println("Error loading doctors from file: " + DOCTORS_FILE);
             e.printStackTrace();
         }
     }
@@ -191,6 +212,7 @@ class HealthSystem {
                 patients.put(fullName, new Patient(fullName, phoneNumber, personAge, personGender, passwordHash));
             }
         } catch (IOException e) {
+            System.err.println("Error loading patients from file: " + PATIENTS_FILE);
             e.printStackTrace();
         }
     }
@@ -201,6 +223,7 @@ class HealthSystem {
                 writer.println(doctor.phoneNumber + "," + doctor.fullName + "," + doctor.personAge + "," + doctor.personGender + "," + Hash.encode(doctor.getPasswordHash()));
             }
         } catch (IOException e) {
+            System.err.println("Error saving doctors to file: " + DOCTORS_FILE);
             e.printStackTrace();
         }
     }
@@ -211,6 +234,7 @@ class HealthSystem {
                 writer.println(patient.phoneNumber + "," + patient.fullName + "," + patient.personAge + "," + patient.personGender + "," + Hash.encode(patient.getPasswordHash()));
             }
         } catch (IOException e) {
+            System.err.println("Error saving patients to file: " + PATIENTS_FILE);
             e.printStackTrace();
         }
     }
@@ -289,7 +313,6 @@ class Hash {
         return Base64.getEncoder().encodeToString(data);
     }
 }
-
 public class health {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
