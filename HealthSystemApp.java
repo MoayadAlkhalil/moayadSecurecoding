@@ -1,4 +1,5 @@
-package fainal1;
+package fainaltest;
+
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
@@ -7,7 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
 
-class Person {
+ class Person {
     String fullName;
     String phoneNumber;
     int personAge;
@@ -102,8 +103,8 @@ class Patient extends Person {
         loadAndDisplayMedicalInformation(fullName);
     }
 
-    private void loadAndDisplayMedicalInformation(String patientFullName) {
-        String filePath = "CC:\\Users\\moaed\\eclipse-workspace\\secure code\\src\\fainal1\\medical_information.txt";
+     void loadAndDisplayMedicalInformation(String patientFullName) {
+        String filePath = "C:\\Users\\moaed\\eclipse-workspace\\secure code\\src\\fainal1\\medical_information.txt";
         try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
             String line;
             while ((line = reader.readLine()) != null) {
@@ -127,7 +128,7 @@ class HealthSystem {
     private static final String DOCTORS_FILE = "C:\\Users\\moaed\\eclipse-workspace\\secure code\\src\\fainal1\\doctors.txt";
     private static final String PATIENTS_FILE = "C:\\Users\\moaed\\eclipse-workspace\\secure code\\src\\fainal1\\patients.txt";
     private static final String MEDICAL_INFO_FILE = "C:\\Users\\moaed\\eclipse-workspace\\secure code\\src\\fainal1\\medical_information.txt";
-    private static final int MAX_LOGIN_ATTEMPTS = 3;
+    static final int MAX_LOGIN_ATTEMPTS = 3;
 
     Map<String, Doctor> doctors = new HashMap<>();
     Map<String, Patient> patients = new HashMap<>();
@@ -242,13 +243,16 @@ class HealthSystem {
             return null;
         }
 
+        // Check if the user type is Doctor
         if (userType.equals("Doctor")) {
             Doctor doctor = doctors.get(fullName);
             if (doctor != null && doctor.authenticate(password)) {
                 loginAttempts.remove(fullName); // Reset login attempts on successful login
                 return doctor;
             }
-        } else if (userType.equals("Patient")) {
+        }
+        // Check if the user type is Patient
+        else if (userType.equals("Patient")) {
             Patient patient = patients.get(fullName);
             if (patient != null && patient.authenticate(password)) {
                 loginAttempts.remove(fullName); // Reset login attempts on successful login
@@ -286,7 +290,7 @@ class Hash {
     }
 }
 
-public class HealthSystemApp {
+public class health {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
         HealthSystem healthSystem = new HealthSystem();
